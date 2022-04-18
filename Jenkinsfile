@@ -9,7 +9,7 @@ pipeline {
             steps {
                 bat '''
                     echo "PATH = ${PATH}"
-                    echo "MAVEN_HOME = ${MAVEN_HOME}"
+                    echo "M2_HOME = ${M2_HOME}"
                 '''
             }
         }
@@ -17,6 +17,11 @@ pipeline {
         stage ('Build') {
             steps {
                 bat 'mvn -Dmaven.test.failure.ignore=true install' 
+            }
+            post {
+                success {
+                    junit 'target/surefire-reports/**/*.xml' 
+                }
             }
         }
     }
