@@ -1,27 +1,28 @@
 pipeline {
     agent any
     stages {
-        stage('git repo & clean') {
+        stage('Compile Stages') {
             steps {
-                //bat "rmdir  /s /q TicketBookingServiceJunitTesting"
-                bat "git clone https://github.com/SravanVenus/test-repo.git"
-                bat "mvn clean -f TicketBookingServiceJunitTesting"
+                withMaven{maven : 'maven_3_8_5'} {
+                    sh 'mvn clean compile'
+                }
             }
         }
-        stage('install') {
-            steps {
-                bat "mvn install -f TicketBookingServiceJunitTesting"
-            }
+        stage('Test Stage') {
+             steps {
+                withMaven{maven : 'maven_3_8_5'} {
+                    sh 'mvn test'
+                }
+             }
         }
-        stage('test') {
-            steps {
-                bat "mvn test -f TicketBookingServiceJunitTesting"
-            }
-        }
-        stage('package') {
-            steps {
-                bat "mvn package -f TicketBookingServiceJunitTesting"
-            }
+        stage('Deploy Stage') {
+             steps {
+                withMaven{maven : 'maven_3_8_5'} {
+                    sh 'mvn deploy'
+                }
+             }
         }
     }
 }
+                
+                
