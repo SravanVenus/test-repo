@@ -1,28 +1,28 @@
 pipeline {
     agent any
+    tools {
+        maven 'maven_3.8.5'
+        jdk 'jdknew'
+    }
     stages {
-        stage('Compile Stages') {
+        stage ('Initialize') {
             steps {
-                withMaven{maven : 'maven_3_8_5'} {
-                    bat 'mvn clean compile'
+                bat '''
+                    echo "PATH = ${PATH}"
+                    echo "MAVEN_HOME = ${MAVEN_HOME}"
+                '''
+            }
+        }
+
+        stage ('Build') {
+            steps {
+                bat 'mvn -Dmaven.test.failure.ignore=true install' 
+            }
+            post {
+                success {
+                    junit 'target/surefire-reports/**/*.xml' 
                 }
             }
         }
-        stage('Test Stage') {
-             steps {
-                withMaven{maven : 'maven_3_8_5'} {
-                    bat 'mvn test'
-                }
-             }
-        }
-        stage('Deploy Stage') {
-             steps {
-                withMaven{maven : 'maven_3_8_5'} {
-                    bat 'mvn deploy'
-                }
-             }
-        }
     }
 }
-                
-                
